@@ -1,6 +1,9 @@
 ## Python virtual env
 .rssv_model
 
+## Ipynb's stuff
+.ipynb_checkpoints
+
 ## Core latex/pdflatex auxiliary files:
 *.aux
 *.lof
