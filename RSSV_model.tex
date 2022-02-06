@@ -1,0 +1,441 @@
+%This is a LATEX document
+
+%\documentstyle[leqno]{article}
+\documentclass[a4paper, 11pt]{amsart}   
+\usepackage{color}   
+\usepackage{comment}   
+   
+\setlength{\oddsidemargin}{0.0in}   
+\setlength{\evensidemargin}{0.0in}   
+\setlength{\textwidth}{6.5in}   
+\setlength{\topmargin}{0.0in}   
+\setlength{\textheight}{8.5in}      
+\renewcommand{\arraystretch}{1.5}   
+   
+%\newcommand{\be}{\begin{equation}}
+%\newcommand{\ee}{\end{equation}}
+
+\newcommand{\calO}{{\cal O}}
+\newcommand{\calL}{{\cal L}}
+\newcommand{\calG}{{\cal G}}
+\newcommand{\calH}{H }
+\newcommand{\calM}{{\cal M}}
+\newcommand{\calS}{{\cal S}}
+
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{corollaire}[theorem]{Corollaire}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{question}{Question}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{definition and theorem}[theorem]{Definition and   
+Theorem}   
+\newtheorem{theoreme_et_definition}[theorem]{Th\'eor\`eme et d\'efinition}
+\newtheorem{remarque}[theorem]{Remarque}   
+\newtheorem{remark}[theorem]{%$^* $   
+Remark}   
+\newtheorem{*remark}[theorem]{$^* $Remark}
+\newtheorem{exercice}[theorem]{Exercice}
+\newtheorem{*exercise}[theorem]{$^* $Exercise}
+\newtheorem{**exercise}[theorem]{$^{** } $Exercise}
+\newtheorem{exemple}[theorem]{Exemple}
+\newtheorem{exemples}[theorem]{Exemples}
+\newtheorem{propriertes}[theorem]{Propri\'ertes}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{spv}[theorem]{Sneak preview}   
+%\parindent0pt   
+   
+\excludecomment{versionA}   
+%\includecomment{versionA}   
+   
+\excludecomment{versionAA}   
+%\includecomment{versionAA}   
+   
+\begin{document}
+
+\title[IP for regime-switching stochastic vol models]{Inverse problems for derivative pricing in regime switching volatility models \\
+    (hidden Markov model for volatility)
+}
+
+\author{Raymond Brummelhuis, Serge-Andr\'e Masson}
+
+\maketitle
+
+\section{\bf Introduction}
+
+For local volatility models of option pricing (that is, models for which the instantaneous volatility is a function of the underlying asset and of time only) it has been known since Dupire \cite{Du} that knowledge, at some given date, of all European call options prices for all possible maturities and strikes allows one to reconstruct the local volatility function. It is natural to ask whether a similar result can be true for more general stochastic volatility models in which the volatility process has an independent component from the stochastic process which drives the stock price changes (or, if one prefers and in a Brownian motion setting, models for which volatility changes are not perfectly correlated with price changes). More generally, anticipating a possibly negative answer to this question, one can ask to what extend European call prices for all possible maturities and strikes determine the (parameters of the) volatility process. In this paper we examine this question for models in which the volatility is driven by a not directly observable finite state continuous-time Markov chain.
+
+\section{\bf The model}
+
+$\Rightarrow $ Literature-review: Elliott and co-authors, others (?) \textcolor{blue}{  - \`a faire}
+\medskip
+
+\subsection{The Regime-Switching Stochastic Vol or RSSV model} Let $(X_t )_{t \geq 0 } $ be a continuous time Markov chain with finite state space  $\{ 1, \ldots , N \} $, and risk-neutral transition probability rates $q_{ij } $ defined by
+\begin{equation}
+    \mathbb{P } (X_{t + dt } = j | X_t = i ) = \delta _{ij } + q_{ij } dt
+\end{equation}
+where $\mathbb{P } $ will denote the risk-neutral probability selected by the market for pricing traded assets.
+\medskip
+
+\textcolor{blue}{{\bf Commentaires}:
+    \begin{itemize}
+        \item Une fa\c con plus  propre de formuler ceci: $\mathbb{P } (X_{t + h } = j | X_t = i ) = \delta _{ij } + q_{ij }  h + o(h) $, $h \to 0 $
+        \item Attention: changement de notation par rapport \`a celle utilis\'ee auparavant: $q_{ij } $ en lieu de $a_{ji } $
+        \item Faire une r\'emarque sur les diff\'erentes probabilit\'es risque-neutres? Le mod\`ele (\ref{eq:RSSV_model}) avec un drift $\nu $ (plus un actif sans risque - compte en banque) n'est pas compl\`et.
+    \end{itemize}
+}
+\medskip
+
+We consider options written on a frictionlessly traded asset  whose risk-neutral price dynamics is given by
+\begin{equation} \label{eq:RSSV_model}
+    dS_t = r S_t dt + \sigma (X_t ) S_t dW_t ,
+\end{equation}
+where $r $ is the constant risk-free rate and $\sigma : \{ 1 , \ldots , N \} \to \mathbb{R } $ is some given function. We suppose that the Brownian motion $(W_t )_{t \geq 0 } $ is independent of the Markov chain $(X_t )_{t \geq 0 } . $
+We note that the process $(S_t )_{t \geq 0 } $ has a.s. continuous trajectories (so we don't have to write $S_{t- } $ instead of $S_t $): the jumps are in the, not directly observable, instantaneous volatilities.
+
+\begin{remark} \rm{We could also work directly with the Markov chain $\sigma _t  := \sigma (X_t ) $, whose state space is $\{ \sigma _1 , \ldots , \sigma _N \} $ where $\sigma _j = \sigma (j) \} $ and (infinitessimal) transition probabilities
+        $$
+            \mathbb{P } (\sigma _{t + dt } = \sigma _j | \sigma _t = \sigma _k ) = \delta _{ij } + q_{ij } dt .
+        $$
+        One advantage of using a hidden Markov process $X_t $ defined on an abstract state space is that the model then naturally extends to include for example stochastic risk-free interest rates, by specifying a second function $r : E \to \mathbb{R } $ and specifying price dynamics by
+        $$
+            dS_t = r(X_t ) S_t dt + \sigma (X_t) S_t dW_t .
+        $$
+        Similarly, one could add state-dependend dividend rates. As before, sample paths of $(S_t )_{t \geq 0 } $ are a.s. continuous: the jumps are in the (Ito-) derivatives of $S_t . $  For now we will take $r $ constant, and concentrate on the regime-switching stochastic volatilty model (\ref{eq:RSSV_model}).
+    }
+\end{remark}
+
+\subsection{Derivative pricing in RSSV models} As explained in the introduction, we are interested in the inverse problem of determining the model parameters $\sigma _i $, $q_{ij } $ from observed European call option prices for all strikes and maturities. To that effect, we start by reviewing European option pricing in our model. The problem of option pricing in regime-switching models (not only models for stochastic volatility but also for example interest rate en credit risk models) has drawn a lot attention in the mathematical finance literature, notably in papers by Robert Elliott and his co-authors: see \textcolor{blue}{ [add string of references papers by Elliott et al]} and also \textcolor{blue}{[other papers?]}. The majority of these are concerned with the direct problem of computing option prices for a given set of parameters, though some papers also examine calibration issues: see for example Xi, Rodrigo and Mamo \cite{XRM} We will review the PDE approach to pricing, which for the model (\ref{eq:RSSV_model}) amounts to solving a system of PDEs for the option prices in the different Markov-chain states. We then, following an idea of \cite{XRM} derive a Dupire-type equation for call-option prices as function of strike and maturity.
+\medskip
+
+By risk-neutral pricing, a European derivative written on the asset $S_t $ and paying off an amount of $F(S_T ) $ at its maturity $T $ will have a time-$t $ price given by the discounted risk-neutral expectation
+\begin{equation}
+    V_t = \mathbb{E } \left(  e^{- r (T - t ) } F(S_T ) | \mathcal{F }^{S, X } _t \right) %\mathbb{E } \left( e^{- r (T - t ) } F(S_T ) | S_t = S, X_t = i \right) ,   
+\end{equation}
+where $\mathcal{F }^{S, X } _t $ is the filtration generated by the process $(S_t, X_t )_{t \geq 0 } . $ Since the latter is Markov, we have that $V_t = V (S_t, X_t , t ) $, where
+\begin{equation} \label{eq:European_option_price}
+    V(S, i , t ) = \mathbb{E } \left( e^{- r (T - t ) } F(S_T ) | S_t = S, X_t = i \right) , i = 1, \ldots , N ,
+\end{equation}
+remembering that $X_t \in \{ 1 , \ldots , N \} . $ It will be convenient to collect these $N $ functions into a column vector
+$$
+    V(S, t ) := (V(S, 1 , t ) , \ldots , V(S, N , t )^T
+$$
+$^T $ standing for "transpose", and we will consequently write $V_i (S, t ) $ for $V(S, i , t ) . $
+\medskip
+
+The prices $V_i (S , t ) $ satisfy a system of PDEs.
+
+\begin{theorem} \label{thm:Dynkin} Suppose that $f = f(S, X, t ) $ is a $C^{2, 1 } $-function\footnote{two times continuously differentiable with respect to $S $, once with respect to $t $} on $\mathbb{R } \times \{ 1 , \ldots , N \} \times \mathbb{R } . $ Then
+    \begin{eqnarray} \label{eq:Dynkin}
+        &&\mathbb{E } \left( df (S_t , X_t , t ) | S_t  = S , X_t = i \right) \\
+        &=&= \left( \partial _t f (S , i , t ) + r S \partial _S f (S, i, t ) + \frac{1 }{2 } \sigma (i)^2 S ^2 \partial _S ^2 f (S, i , t ) + \sum _{j = 1 } ^N q_{ij }f (S , j , t ) \right) dt . \nonumber
+    \end{eqnarray}
+\end{theorem}
+
+\noindent {\it Proof}. Conditioning first on the Markov chain at $t + dt $ and using that the Markov chain is, by assumption, independent of the Brownian motion, we have
+\begin{eqnarray} \nonumber
+    \mathbb{E } (f(S_{t + dt } , X_{t + dt }, t ) \, | S_t = S, X_t = i ) &=& \mathbb{E } \left( \mathbb{E } (f (S_{t + dt } , X_{t + dt } , t ) \,  | X_{t + dt } ) | S_t =S , X_t = i \right) \\
+    &=& \mathbb{E } \left( \sum _{j = 1 } ^N f(S_{t + dt } , j , t ) (\delta _{ij } + q_{ij } dt ) \, | S_t = S \right) \nonumber \\
+    &=& \sum _{j = 1 } ^N \mathbb{E } \left( f(S + r S dt + \sigma _j S dW_t , j ) \right) (\delta _{ij } + q_{ij } dt ) , \label{proof_Dynkin}
+\end{eqnarray}
+since to order $dt $ there can be at most on jump in $[t, t + dt ] . $ By Ito's lemma,
+$$
+    \mathbb{E } \left( f(S + r S dt + \sigma _j S dW_t , j , t ) \right) = f(S, j , t ) + \left( \partial _t f + r S \partial _S f + \frac{1 }{2 } \sigma _j ^2 \partial _S ^2 f \right) dt ,
+$$
+with $f $'s derivatives all evaluated in $(S, j, t ) . $ Substituting this into (\ref{proof_Dynkin}) and using that $ (dt)^2 = 0 $, we see that only the terms $f(S, j , t ) q_{ij } dt $ and $f(S , i , t ) + \left( \partial _t f + r S \partial _S f + \frac{1 }{2 } \sigma _j ^2 \partial _S ^2 f \right) dt $ remain which, after subtracting $f(S , i , t ) $, proves (\ref{eq:Dynkin}). \hfill $\Box $
+\medskip
+
+Assuming we would know that the $V _i (S, t ) $ are $C^{2, 1 } $ as a function of $S $ and $t $, the fact that $e^{-r t } V(S_t, X_t , t ) $ is a martingale, and therefore has drift 0, and theorem \ref{thm:Dynkin} applied to $e^{- r t } V_i (S, t ) $ immediately implies that they must satisfy the system of PDEs
+\begin{equation} \label{eq:pricing_PDE}
+    \partial _t V_i + \frac{1 }{2 } \sigma _i (S , t )^2 S^2 \partial _S ^2 V_i + r S \partial _S C + \sum _i q_{ij } V_j = r V_i , \ \ t < T ,
+\end{equation}
+with final condition $V(S, T ) = F(S) . $ It is possible to prove directly from (\ref{eq:European_option_price}) that the $V_i $'s are $C^{2 , 1 } $: see for example \cite{?}. Alternatively, one can use the theory of linear PDEs: the system (\ref{eq:pricing_PDE}) with the final condition $F $  has a unique smooth solution \textcolor{blue}{- reference? Friedman's book on parabolic PDE? - }. By theorem \ref{thm:Dynkin}, $e^{- r t } V(S_t , X_t , dt ) $ is a local martingale. If $F $ is for example bounded, then so is the solution $(V_i )_i $, which implies that the local martingale is a martingale, so that
+$$
+    e^{-r t } V(S_t , i,  t ) = \mathbb{E } \left( e^{- r T } F(S_T ) | S_t, X_t \right) ,
+$$
+and $V(S_t, X_t , t ) $ is the price of the derivative.
+\medskip
+
+\textcolor{blue}{Deux remarques:
+    \begin{itemize}
+        \item dernier argument \`a re-v\'erifier et \`a g\'en\'eraliser pour un call (dont le pay-off n'est pas born\'e)
+        \item Le "payoff" $F $ peut en principe \'etre vectoriel, c'est \`a dire, d\'ependant de l'\'etat de la chaine de Markov \`a $T $, mais admettre de tels pay-off vectoriel impliqu\'erait que les \'etats de la chaine de Markov sont observables, ce qui n'est pas le cas pour notre mod\`ele, puisqu'on peut pas observer la volatilit\'e instantann\'ee $\sigma (X_T ) $ \`a $T $
+    \end{itemize}
+}
+\medskip
+
+We now specialize to European call options with (state-independent) pay-off $F(S_T ) = \max (S_T - K , 0 ) . $ We will denote the value of the call by $C(S , X , t ; K, T ) $ ($X \in \{ 1, \ldots , N \} $ and also as a column vector $C (S , t ; K , T ) = \left( C (S, 1, t ; K, T ) , \ldots , C (S, N, t ; K , T ) \right) ^T $, where $C_i (S, t ; K, T ) = C(S , i , t ; K, T ) . $ It will satisfy the system
+\begin{equation} \label{eq:PDE_call}
+    \partial _t C + \frac{1 }{2 } \Sigma ^2 \, S^2 \partial _S ^2 C + r S \partial _S C + Q C = r C ,
+\end{equation}
+where %$\Sigma := {\rm diag } ( \sigma _1 ^2 , \ldots , \sigma _N ^2 ) $, 
+\begin{equation}
+    \Sigma ^2 = \begin{pmatrix} \sigma _1 ^2 & \      & \            \\
+                \            & \ddots & \            \\
+                \            & \      & \sigma _N ^2
+    \end{pmatrix}
+\end{equation}
+is the diagonal matrix of the state-dependend volatilities, and $Q = (q_{ij } )_{1 \leq i, j \leq N } $ is the matrix of transition probability rates of the Markov chain. The matrix $Q $ is row-stochastic: if $\mathbf{1 } := (1, 1, \ldots , 1 )^T $, then
+\begin{equation}
+    Q \mathbf{1 } = 0
+\end{equation}
+Since the model is time-homogeneous, we can write $C (S , t ; K , T ) = C (S, K, T - t) $ (with a slight abuse of notation).
+\medskip
+
+
+The inverse problem we are interested in then is the following:
+
+\begin{question} Suppose that at a given time $t_0 $ we observe all call prices $C_i (S_0 , t_0 ; K, T ) $ for arbitrary strike  $K > 0 $ and maturity $T > t_0 $, where $i $ is the state of the Markov chain in which we are in at time $t_0 . $ How much of the model parameters $N $ (the number of Markov states), $\sigma _i $ (the state-dependent volatilities) and $q_{ij } $ (the transition probability rates) can we reconstruct ?
+\end{question}
+
+We have a total of $1 + n + n^2 - n = n^2 + 1 $ parameters and a continuum of observed prices (in our idealized set-up), so the problem seems at first sight over-determined.
+\medskip
+
+\textcolor{blue}{{\bf Question}: is $2N - 2 = $ maximal size for which the matrix $\left( (A^j v , ^T A^k w ) \right) _{j, k } $ is of full rang? Here $A = z \Sigma + Q $ }
+
+\subsection{Dupire's equation}
+
+\begin{theorem} (Xi, Rodrigo and Mamon \cite{XRM}) Fix $S = S_0 , t = t_0 . $ Then as a function of $(K, T ) $, the vector of prices $C(S , t ; K, S ) $ satisfies the system of PDEs
+    \begin{equation} \label{eq:Dupire}
+        \partial _T C = \frac{1 }{2 } \Sigma ^2 \, K^2 \partial _K ^2 C - r K \partial _K C + Q C , \ \ T > 0 ,
+    \end{equation}
+    with initial value $C (S_0 , t_0 , K , 0 ) = \max (S_0 - K , 0 ) \mathbf{1 } . $
+\end{theorem}
+
+\begin{proof} Xi {\it et al.} \cite{XRM} first observe that $C $ is homogeneous of order 1 in $(K, S ) $ by showing that $C (\lambda S , t ; \lambda K , T ) $ and $\lambda C (S , t ; K , T ) $ both satisfy the $N \times N $-system (\ref{eq:PDE_call}), %system (\ref{eq:PDE_call}),   
+    since the (matrix-)coefficients of this system are constant. They both have the the same final value value $\lambda \max (S - K , 0 ) $ at $T $, and are therefore identical. The Euler relation
+    $$
+        S \partial _S C + K \partial _K C = C
+    $$
+    then allows to express derivatives with respect to $S $ in terms of derivatives with respect to $K $, and (\ref{eq:Dupire}) follows from (\ref{eq:PDE_call}). Alternatively, one can use the relation
+    that $C (S, K , T - t_0 ) = S \, C (1 , K/S , T - t_0 ) $ to derive (\ref{eq:Dupire}).
+\end{proof}
+
+\noindent \textcolor{blue}{{\bf Interrogation}: la question se pose si c'est vraiement n\'ecessaire, pour notre probl\`eme inverse, d'utiliser une \'equation de Dupire, dans le sens qu'on peut d\'eduire, pour ce mod\`ele, une formule explicite pour la  transformation de Fourier du prix en r\'esolvant (\ref{eq:PDE_call}) dans l'espace de Fourier (apr\`es passage au prix logarithmique $x = \log S/S_0 $) comme on le fait pour Dupire ci-bas, formule qu'on peut ensuite manipuler en tant que fonction de $K $ ou de $\log (K/S_0 ) $ ($S_0 $ \'etant le prix du sous-jacent au moment de l'observation) et de $T . $ On peut peut-\^etre pour ce mod\`ele sp\'ecifique, en quelque sorte "court-circuiter" Dupire? \`A suivre.
+}
+\medskip
+
+
+Passing to log-coordinates $x = \log K $ and letting $c (x, T ) := C (S_0 , e^x , T ) $ (suppressing the $S_0  $-dependence from the notions and taking welog $t_0 = 0 $) we find that
+\begin{equation}
+    \partial _T c = \frac{1 }{2 } \Sigma ^2 \partial _x ^2 c - \left(  \frac{1 }{2 } \Sigma ^2 + r \right) \partial _x c + Q c , \ \ T > 0
+\end{equation}
+with initial condition $c (x, 0 ) = c_0 (x) := \max ( S_0 - e^x , 0 ) \mathbf{1 } . $ It is natural to solve this using the Fourier transform: if we take $r = 0 $ to simplify, and if $\widehat{c }  (\xi , T ) $ is the Fourier transform with respect to the $x $-variable of the (vector-valued) call price function $c $, then
+$$
+    \partial _T \widehat{c } = - \left( \, \frac{1 }{2 } (\xi ^2 + i \xi ) \Sigma ^2 - Q \, \right) \widehat{c } ,
+$$
+with initial condition $\widehat{c } (\xi , 0 ) . $ If the initial condition would have been an integrable function, the solution is
+\begin{equation} \label{eq: FT_call}
+    c(\xi , T ) = e^{- T ( \frac{1 }{2 } (\xi ^2 + i \xi  )\Sigma ^2 - Q ) }\widehat{c } (\xi , 0 )  \mathbf{1 } ,
+\end{equation}
+%where we put $\zeta := \zeta (\xi ) := \frac{1 }{2 } (\xi ^2 + i \xi  ) $ and   
+where the exponential is a matrix exponential. In our case, $c (x, 0 ) $ is only a bounded function and thus a tempered distribution, as is its Fourier transform. To show that (\ref{eq: FT_call}) defines a tempered distribution we have to check that $\xi \to \exp ( - T ( \frac{1 }{2 } (\xi ^2 - i \xi ) \Sigma ^2 - Q ) ) $ belongs to the Schwarz-class of rapidly decreasing functions. While this is not in doubt, proving it is slightly technical since we are dealing with the exponential of a sum of two non-commuting matrices, and there are no simple opper bounds we are aware off of for example $|| e^{A + B } || $ en termes of $|| e^A || $ and $|| e^B || $ when $A $ and $B $ are non-commuting matrices.
+
+\begin{lemma} \textcolor{blue}{ - lemme technique: peut \^etre saut\'e en premi\`ere lecture - } $\xi \in \exp ( - T ( \frac{1 }{2 } (\xi ^2 + i \xi ) \Sigma ^2 - Q ) ) $ is a rapidly decreasing function of $\xi $ (with values in the space of $N $-dimensional matrices), and (\ref{eq: FT_call}) is therefore well-defined as a tempered distribution, for ant tempered distribution $c(x, 0 ) . $
+\end{lemma}
+
+\begin{proof} We will exploit the fact that $P(t) := e^{t Q } $ is a row-stochastic non-negative matrix, since
+    $$
+        P_{ij } (t) = \mathbb{P } (X_t = j | X_0 = i ) ,
+    $$
+    and therefore $\sum _j P_{ij } (t ) = 1 . $
+    If $|| v ||_{\infty } := \max _i |v_i | $ is the sup-norm on $\mathbb{C }^N $, then any non-negative row-stochastic matrix $P $ is a contraction with respect to this norm:
+    $$
+        || P v ||_{\infty } \leq || v ||_{\infty } ,
+    $$
+    as is easily checked\footnote{Since $P_{ij } \geq 0 $, $|| Pv ||_{\infty } = \max _i  | \sum _j P_{ij } |v_j | \leq \max _i \sum _j P_{ij } || v ||_{\infty } = || v ||_{\infty } $, since $\sum _j P_{ij } = 1 . $ }.
+
+    Next, we recall Lie's formula \textcolor{blue}{(reference \cite{? })}:
+    $$
+        e^{A + B } = \lim _{n \to \infty } \left( e^{A/n } e^{B/n } \right)^n ,
+    $$
+    which implies that $|| e^{A + B } || \leq \lim _{n \to \infty } || e^{A/n } || ^n \, || e^{B / n } || ^n $ for any matrix-norm $|| A || $, and in particular for $|| A ||_{\infty } = \sup _{|| v ||_{\infty } = 1 } || A v ||_{\infty } . $ Applying this with $A = - T (\xi ^2 + i \xi ) \Sigma ^2 $ and $B = T Q $ and using that $|| e^{T Q / n } ||_{\infty } \leq 1 $ (in fact, equal to 1, since if $P $ is a stochastic matrix, $P \mathbf{1 } = \mathbf{1 } $, which shows that $\sup _{|| v ||_{\infty } = 1 } || P v ||_{\infty } = 1 $), we find that
+    $$
+        \left | \left | \, e^{- T(\xi ^2 + i \xi ) \Sigma ^2 + T Q } \, \right | \right | _{\infty } \leq \lim _{n \to \infty } \, \left | \left | \, e^{ - \frac{T }{n } (\xi ^2 + i \xi ) \Sigma ^2 } \, \right | \right | _{\infty } ^n
+    $$
+    If $\Lambda = {\rm diag} ( \lambda _1 , \ldots , \Lambda _N ) $ is diagonal, then $|| \Lambda ||_{\infty } \leq \max _i |\lambda _i | . $ Applying this to $\Lambda = \exp ( - \frac{T }{2n } (\xi ^2 + i \xi ) \Sigma ^2 ) $ with $\lambda _j = e^{- (T/2n ) (\xi ^2 + i \xi ) \sigma _j ^2 } $, we see that the right hand side equals
+    $$
+        \left | \left | \, e^{- T(\xi ^2 + i \xi ) \Sigma ^2 + T Q } \, \right | \right | _{\infty } \leq \lim _{n \to \infty } \left( e^{ - \frac{T }{2n } \xi ^2 \min _j \sigma _j ^2 } \right) ^n = e^{- T \xi ^2 (\min _j \sigma _j ^2 ) / 2 } ,
+    $$
+    which is rapidly decreasing in $\xi . $
+
+    We next examine the derivatives with respect to $\xi \in \mathbb{R } $ of $e^{- T (\xi ^2 + i \xi ) \Sigma ^2 + T Q } . $ Again, there is no closed formula for the derivative with respect to $\xi $, since the matrices $\Sigma ^2 $ and $Q $ do not commute. We will use the following formula [Wilcox, R. M., Exponential operators and parameter differentiation in quantum physics, J. Math. Phys  (1967)]: if $A(\xi ) $ is a $C^1 $ matrix-valued function on $\mathbb{R } $, then
+    $$
+        \frac{d }{d \xi } e^{t A (\xi ) } = \int _0 ^t e^{(t - s ) A(\xi ) } A'(\xi ) e^{s A (\xi ) } ds .
+    $$
+    Applying this with $t = 1 $ to $A(\xi ) = - \frac{1 }{2 } T ((\xi ^2 + i \xi ) \Sigma ^2 - Q ) $ and using our estimate above for the norm of $e^{A(\xi ) } $ we find
+    $$
+        \left | \left | \frac{d }{d \xi } e^{A (\xi ) } \right | \right | _{\infty } \leq C (|\xi | + 1 ) \int _0 ^1 || e^{- s A (\xi ) } ||_{\infty } || e^{(1 - s ) A(\xi ) } ||_{\infty } ds \leq C (|\xi | + 1 ) e^{- T \xi ^2 (\min _j \sigma _j ^2 ) / 2 } ,
+    $$
+    with $C = T || \Sigma ^2 ||_{\infty } = T \max _j \sigma _j ^2 $, and where the $\ell ^{\infty } $-norm can of course be replaced by any other matrix norm. Higher order derivatives cab be treated by iterating Wilcox's formula, e.g.
+    \begin{eqnarray*}
+        \frac{d^2 }{d \xi ^2 } e^{t A (\xi ) } &=& \int _0 ^t e^{(t - s ) A } A''(\xi ) e^{s A } ds + \int _0 ^t \left( \int _0 ^{t - s } e^{(t - s - u ) A } A'(\xi ) e^{u  A } du \right) A'(\xi ) e^{s A } ds \\
+        &\ & + \left( \int _0 ^t e^{(t - s ) A } A'(\xi ) \int _0 ^s e^{(s - u ) A } A'(\xi ) e^{u A } du \right) ds ;
+    \end{eqnarray*}
+
+
+\end{proof}
+
+The fact that $\Sigma ^2 $ and $Q $ will never commute, except in trivial cases\footnote{if all $\sigma _i ^2 $ are distinct, then $[ \Sigma ^2 , Q ] = 0 $ with $Q \neq 0 $ implies that $Q $ is a permutation matrix \textcolor{blue}{(au moins, je crois)}. The row sums of a permutation matrix are all equal to 1, so $Q $ cannot be the generator of a Markov chain then.  If for example $\sigma _1 ^2 = \sigma _2 ^2 $, then $\Sigma ^2 $ can commute with non-zero generator matrices $Q $ whose non-zero elements correspond to transitions between states 1 and 2, but these will then have no effect on the volatility $S_t $} will be the cause of most of the technical problems in this paper, and makes the direct and inverse problem of option pricing in our hidden Markov model interesting and non-trivial, even in the simplest case of a two-state Markov chain.
+\medskip
+
+The (distributional) Fourier transform of $c(x, 0 ) = \max (S_0 - e^x , 0 ) $ can be computed explicitly, and is equal to
+\begin{equation}
+    \widehat{c } (\xi , 0 ) = i S_0 ^{1 - i \xi } \left( \frac{1 }{\xi + i 0 } - \frac{1 }{\xi + i } \right) ,
+\end{equation}
+where $(\xi + i 0 )^{-1 } := \lim _{\varepsilon \to 0+ } (\xi + \varepsilon )^{-1 }  = {\rm pv } (1 / \xi ) - i \pi \delta _0 (\xi ) . $
+\medskip
+
+\noindent \textcolor{blue}{{\bf D\'etails du calcul}: $c_0 (x) := \max (S_0 - e^x , 0 ) $ n'est pas int\'egrable, mais $c_{\varepsilon } (x) := e^{\varepsilon x } \max (S_0 - e^x , 0 ) $ l'est, pour tout $\varepsilon > 0 $, et $c_{\varepsilon } \to c_0 $ comme distributions temper\'ees, et donc $\widehat{c }_{\varepsilon } \to \widehat{c } . $ Or,
+    \begin{eqnarray*}
+        \widehat{c }_{\varepsilon } (\xi ) &=& \int _{\mathbb{R } } c_0 (x) e^{\varepsilon x - i x \xi } dx \\
+        &=& \int _{- \infty } ^{\log S_0 } \left( S_0 e^{(\varepsilon - i \xi ) x } - e^{(\varepsilon + 1 - i \xi ) x } \right) dx \\
+        &=& S_0 \cdot \frac{e^{(\varepsilon - i \xi ) \log S_0 } }{\varepsilon - i \xi } - \frac{e^{(\varepsilon + 1 - i \xi ) \log S_0 } }{\varepsilon + 1 - i \xi } \\
+        &=& i S_0 ^{1 + \varepsilon - i \xi } \left( \frac{1 }{\xi + i \varepsilon } - \frac{1 }{\xi + i (1 + \varepsilon ) } \right) \\
+        &\to & S_0 ^{1 - i \xi } \left( \frac{1 }{\xi + i 0 } - \frac{1 }{\xi + i } \right) .
+    \end{eqnarray*}
+}
+Note that away from $\xi = 0 $, $\widehat{c } (\xi , 0 ) $ can be identified with a non-vanishing locally integrable function. It follows that if we would know all call prices $C_1 (S_0 , 0 ; K , T ) = (C(S_0 , 0 ; K, T ) , e_1 ) $, for all positive $K $ and $T $, assuming without essential loss of generality that at the time of observation $t = 0 $ we are in the hidden Markov state 1, then we would know the function $(c(x, T ) , e_1 ) $ and therefore its Fourier transform $(\widehat{c } (\xi , T ) , e_1 ) $ given by (\ref{eq: FT_call}). Since $\widehat{c } (\xi , 0 ) \neq 0 $ for all $\xi \neq 0 $, this implies that we would know the function
+\begin{equation}
+    \left( e^{ - T (\zeta \Sigma ^2 - Q ) } \mathbf{1 } , e_1 \right) ,   \ \ (\xi , T ) \in \mathbb{R } \times \mathbb{R }_{> 0 } ,
+\end{equation}
+where we put $\zeta = \zeta (\xi ) := \xi ^2 + i \xi $, to simplify notations. In particular, evaluating the derivatives $\partial _T ^k $ at $T = 0 $, we would know
+\begin{equation} \label{eq:donn�es_Pb_Inv}
+    \left( \, ( - \zeta \Sigma ^2 + Q ) ^k \mathbf{1 } , e_1 \right) , \ \ k = 0, 1, 2, \ldots
+\end{equation}
+and the inverse problem we study becomes
+
+\begin{question} How much of the matrices $\Sigma ^2 $ and $Q $ can one reconstruct from knowledge of (\ref{eq:donn�es_Pb_Inv}) (under appropriate conitions on $\Sigma ^2 $ and on $Q $)?
+\end{question}
+
+We note in passing that since (\ref{eq:donn�es_Pb_Inv}) are polynomials in $\zeta $, if we know them for all $\zeta $ of the form $\zeta = \xi ^2 - i \xi $, we know them for all $\zeta \in \mathbb{C } $ (in fact, we only need to know their values on $k + 1 $ different points). %In particular, we can replace $- \zeta $ by $\zeta $, as we will sometimes do.   
+\medskip
+
+\subsection{Relation between (\ref{eq:donn�es_Pb_Inv}) and observed option prices} We can take $S_0 = 1 $ without essential loss of generality. We first note that
+$$
+    (\xi ^2 + i \xi ) \widehat{c } (\xi , 0 ) =   \xi (\xi + i ) \cdot i \left( \frac{1 }{\xi + i 0 } - \frac{1 }{\xi + i } \right) = i ( (\xi + i ) - \xi ) = -1 ,
+$$
+(which is equivalent to $(\partial _x ^2 - \partial _x ) c(x, 0 ) = \delta _0 $). Therefore
+$$
+    (\xi ^2 + i \xi ) \widehat{c } (\xi , T ) %= c(\xi , T )   
+    = - e^{ T ( - \frac{1 }{2 } %(\xi ^2 + i \xi  )   
+            \zeta \Sigma ^2 + Q ) } \mathbf{1 } ,
+$$
+where $\zeta := \zeta (\xi ) := \xi ^2 + i \xi $, and
+$$
+    %\left( \,   
+    ( - \zeta \Sigma ^2 + Q ) ^k \mathbf{1 } %, e_1 \right)   
+    = - (\xi ^2 + i \xi ) \frac{\partial ^k }{\partial T ^k } %e^{- T ( \frac{1 }{2 } (\xi ^2 + i \xi  )\Sigma ^2 - Q ) }   
+    \widehat{c } (\xi , T ) |_{T = 0 } ,
+$$
+Now
+$$
+    ( - \zeta \Sigma ^2 + Q )^k = \sum _{j = 0 } ^k P^{(k) } _j (\Sigma ^2 , Q ) (-1 )^j \zeta ^j ,
+$$
+where $P^{(k) } _j (\Sigma ^2 , Q ) $ s a polynomial in the nonommuting (!) variables $\Sigma ^2 $ and $Q $: for example, $P^{(k)} _0 (\Sigma ^2 , Q ) = Q^k $, while
+$$
+    P^{(k)}  _1 (\Sigma ^2 , Q ) = Q^{k - 1 } \Sigma ^2 + Q^{k - 2 } \Sigma ^2 Q + \cdots + \Sigma ^2 Q^{k - 1 } .
+$$
+Note that since $Q \mathbf{1 } = 0 $,
+$$
+    \left( \, P^{(k) }  _1 (\Sigma ^2 , Q ) \mathbf{1 } , e_1 \, \right) = (Q^{k - 1 } \Sigma ^2 \mathbf{1 } , e_1 ) ,
+$$
+that is, only the first term survives when looking at the for us relevant matrix element.
+
+Remembering that $\zeta = \xi ^2 + i \xi $, we therefore have
+\begin{eqnarray*}
+    P^{(k) } _j (\Sigma ^2 , Q ) &=& \frac{(-1 )^j }{(2j )! } \partial _{\xi } ^{2j } ( - \zeta \Sigma ^2 + Q )^k |_{\xi = 0 } \\
+    &=& - \frac{(-1 )^j }{(2j )! } \partial _{\xi } ^{2j } \partial _T ^k \left( \, (\xi ^2 + i \xi ) \widehat{c } (\xi , T ) \right) |_{\xi = 0 , T = 0 }
+\end{eqnarray*}
+Now
+$$
+    - \partial _{\xi } ^{2j } (\xi ^2 + i \xi ) \widehat{c } (\xi , T ) = \mathcal{F }_{x \to \xi } \left( (ix )^{2j } (\partial _x ^2 - \partial _x ) c(x, T ) \right) ,
+$$
+so that we find that
+\begin{equation} \label{eq:donn�es_IP_bis}
+    p_{k, j } := \left( \, P^{(k) } _j (\Sigma ^2 , Q ) \mathbf{1 } , e_1 \, \right)  = \int _{\mathbb{R } } x^{2j } (\partial _x ^2 - \partial _x ) \partial _T ^k c_1 (x, T ) \big{\vert }_{T = 0 } dx
+\end{equation}
+Transforming variables back to $K = e^x $, we can also write this as
+\begin{equation}
+    %\left( \, p^k _j (\Sigma ^2 , Q ) \mathbf{1 } , e_1 \, \right) =   
+    p_{k, j } = \int _0 ^{\infty } (\log K )^{2j } \, \left( K^2 \partial _K ^2 \partial _T ^k C \right) (1 ; 0 , K, T ) \, \frac{dK }{K } \ \ (?)
+\end{equation}
+which can obviously be determined from observed option prices.
+
+\section{\bf Inverse option pricing problem for a two-state Markov chain} In this subsection we show that if $N = 2 $, then (\ref{eq:donn�es_IP_bis}) with $k = 1, 2, 3 $ uniquely determine the $\sigma _k ^2 $  and the $q_{ij} . $ First of all, since the row-sums of $Q $ are 0 ($Q \mathbf{1 } = 0 $), we have
+$$
+    Q = \begin{pmatrix} - q_{12 } & q_{12 }    \\
+                q_{21 }   & - q _{21 }
+    \end{pmatrix}
+$$
+so $Q $ is determined by the two parameters $q_{12 } $ and $q_{21 } $ which, together with the two volatilies (squared) $\sigma _1 ^2 $ and $\sigma _2 ^2 $ makes for a total of 4 parameters to be determined. Next we look at $(- \zeta \Sigma ^2 + Q )^k $ which we expand for $k = 1 , 2 $ and $3 $: we put $\Sigma ^2 = V $, to simplify the appearance of the formulas and avoid confusion with the powers of $\Sigma $ which occur (which are forcibly even). For $k = 1 $ there is nothing to do, while for the other $k $'s we find
+$$
+    \begin{array}{cccc}
+        (- \zeta V + Q )^2 & =  & \zeta ^2 V ^2 - (V Q + Q V) \zeta + Q^2            \\
+        (- \zeta V + Q )^3 & =  & - \zeta ^3 V^3 + \zeta ^2 (V^2 Q + V Q V + Q V^2 ) \\
+        \                  & \  & - \ \zeta (Q^2 V + QVQ + V Q^2 ) + Q^3
+    \end{array}
+$$
+When applying this to the vector $\mathbf{1 } $, all terms starting with a $Q $ on the left will be 0, so (\ref{eq:donn�es_IP_bis}) will give us
+$$
+    p_{1, 1 } = (V \mathbf{1 } , e_1 ) = \sigma _1 ^2 , \ p_{2, 2 } = (V^2 \mathbf{1 } , e_1 ) = \sigma _1 ^4 ,  \ p_{3, 3 } = (V^2 \mathbf{1 } , e_1 ) = \sigma _1 ^6 ,
+$$
+which are all dependent. We already observed that $p_{1, 0 } = (Q \mathbf{1 } , e_1 ) = 0 $, and similarly for the other $p_{k, 0 } . $ Next,
+\begin{equation} \label{eq:two_state_1}
+    p_{2, 1 } = (Q V \mathbf{1 } , e_1 ) , \ p_{3, 2 } = ((V Q V + Q V^2 ) \mathbf{1 } , e_1 ) = \sigma _1 ^2 (Q V \mathbf{1 } , e_1 ) + (Q V^2 \mathbf{1 } , e_1 ) ,
+\end{equation}
+so that the last equation translates into
+\begin{equation} \label{eq:two_state_2}
+    (Q V^2 \mathbf{1 } , e_1 ) = p_{3, 2 } - \sigma _1 ^2 p_{2, 1 } = p_{3, 2 } - p_{1, 1 } p_{2, 1 } ,
+\end{equation}
+while finally
+\begin{equation} \label{eq:two_state_3}
+    p_{3, 1 } = (Q^2 V \mathbf{1 } , e_1 ) .
+\end{equation}
+Computing $Q V \mathbf{1 } = Q (\sigma _1 ^2 , \sigma _2 ^2 )^t $ and $Q V^2 \mathbf{1 } $, the first equation of (\ref{eq:two_state_1}) and (\ref{eq:two_state_2}) give
+$$
+    \begin{array}{ll}
+        q_{12 } \, (\sigma _2 ^2 - \sigma _1 ^2 ) = p_{2, 1 } \\
+        q_{12 } \, (\sigma _2 ^4 - \sigma _1 ^2 ) = p_{3, 2 } - p_{1, 1 } p_{2, 1 } .
+    \end{array}
+$$
+Dividing the second equation by the first, we find $\sigma _2 ^2 + \sigma _1 ^2 = (p_{3 , 2 } - p_{1, 1 } p_{2, 1 } ) / p_{2, 1 } = (p_{3 , 2 } / p_{2, 1 } ) - p_{1, 1 }  $, so that
+$$
+    \sigma _2 ^2 = \frac{p_{3, 2 } }{p_{2, 1 } } - 2 p_{1, 1 } .
+$$
+The first equation then yields $q_{12 } $:
+$$
+    q_{12 } = \frac{p_{2, 1 } }{\sigma _2 ^2 - \sigma _1 ^2 } = \frac{(p_{2, 1 } )^2 }{p_{3, 2 } - 3 p_{1, 1 } p_{2, 1 } } .
+$$
+Finally (\ref{eq:two_state_3}) translates into
+$$
+    (\sigma _1 ^2 - \sigma _2 ^2 ) (q_{12 }^2 + q_{12 } q_{21 } ) = p_{3, 1 } ,
+$$
+with solution
+$$
+    q_{21 } = \frac{p_{3, 1 } + (\sigma _2 ^2 - \sigma _1 ^2 ) q_{12 } ^2 }{q_{12 } (\sigma _1 ^2 - \sigma _2 ^2 ) } = \frac{p_{3, 1 } }{q_{12 } (\sigma _1 ^2 - \sigma _2 ^2 ) } - q_{12 } = - \frac{p_{3, 1 } }{p_{2, 1 } } - q_{12 } .
+$$
+\textcolor{blue}{Calculs \`a v\'erifier encore; formuler tout ceci comme th\'eor\`eme;  }
+
+\begin{theorem} Suppose all call-prices $C (S_0 = 1 , 0 ; K, T ) $ are known. If
+    \begin{equation}
+        %\left( \, p^k _j (\Sigma ^2 , Q ) \mathbf{1 } , e_1 \, \right) =   
+        p_{k, j } = \int _0 ^{\infty } (\log K )^{2j } \, \left( K^2 \partial _K ^2 \partial _T ^k C \right) (1 ; 0 , K, T ) \, \frac{dK }{K } ,
+    \end{equation}
+    then if $N = 2 $, the model parameters are given by ...
+\end{theorem}
+
+\begin{thebibliography}{article}
+
+    \bibitem{XRM} X. Xi, M. Rodrigo and R.S. Mamon, 2012, Parameter estimation of a regime-switching model using an inverse Stieltjes moment approach?, In: {\it Stochastic Processes, Finance and Control (Festschrift in Honour of Robert Elliott's 70th Birthday)}, Advances in Statistics, Probability and Actuarial Science, Volume I , (eds.: Cohen, S., Madan, D., Siu, T. and Yang, H.), World Scientific, 549-569
+
+\end{thebibliography}
+
+\end{document}
+
+
+
+
+
+\end{document}
+
