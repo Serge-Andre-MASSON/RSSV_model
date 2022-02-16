@@ -1,8 +1,15 @@
+## Python's stuff
+__pycache__
+rssv_model.egg-info
+
 ## Python virtual env
 .rssv_model
 
 ## Ipynb's stuff
 .ipynb_checkpoints
+
+## Pytest
+.pytest_cache
 
 ## Core latex/pdflatex auxiliary files:
 *.aux
