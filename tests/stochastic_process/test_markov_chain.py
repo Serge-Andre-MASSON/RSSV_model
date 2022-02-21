@@ -1,47 +1,77 @@
-# TODO: Pretty this
 import numpy as np
-from stochastic_process.markov_chain import ContinuousMarkovChain
+from numpy.testing import assert_array_equal, assert_array_almost_equal
+from stochastic_process.markov_chain import ContinuousMarkovChain, agregate_matrix
 
 
-def test_ContinuousMarkovChain():
-    X = ContinuousMarkovChain(0.7, 0.2)
+class TestContinuousMarkovChainWithTwoStates():
 
-    #######################
-    # Test generate_paths #
-    #######################
+    Q = np.array([[- 0.7, 0.7], [0.2, - 0.2]])
+    X = ContinuousMarkovChain(Q)
+
+    def test_P_with_step_equal_one(self, step=1):
+        P = self.X.P(step)
+        assert_array_almost_equal(P, np.array([[0.3, 0.7],
+                                               [0.2, 0.8]]))
+
+    def test_P_with_step_equal_one_half(self, step=0.5):
+        P = self.X.P(step)
+        assert_array_almost_equal(P, np.array([[0.65, 0.35],
+                                               [0.1, 0.9]]))
 
     number_of_paths = 2
-    length_of_paths = 4
-    step = 1
+    length_of_paths = 3
+    step = 0.5
+    test_sample = np.array([[0.2, 0.7],
+                            [0.9, 0.3]])
 
-    test_sample = np.array([[0.71, 0.68, 0.17],
-                            [0.5, 0.12, 0.35]])
+    def test_generate_paths(self):
+        paths = self.X.generate_paths(
+            self.number_of_paths, self.length_of_paths, self.step, self.test_sample)
 
-    paths = X.generate_paths(
-        number_of_paths=number_of_paths,
-        length_of_paths=length_of_paths,
-        step=step,
-        random_sample=test_sample)
+        assert paths.shape == (self.number_of_paths, self.length_of_paths)
+        assert_array_almost_equal(paths, np.array([[0, 0, 1],
+                                                   [0, 1, 1]]))
 
-    assert paths.shape == (number_of_paths, length_of_paths)
 
-    assert (paths == np.array([[0, 0, 1, 1],
-                               [0, 1, 1, 0]])).all()
+class TestContinuousMarkovChainWithThreeStates():
+    Q = np.array([[- 0.9, 0.7, 0.2],
+                  [0.2, - 0.5, 0.3],
+                  [0.4, 0.6, -1.]])
+    X = ContinuousMarkovChain(Q)
 
-    #############
-    # Test generate_one_path #
-    #############
+    def test_P(self):
+        step = 1
+        P = self.X.P(step)
+        assert_array_almost_equal(self.X.P(step), np.array(
+            [[0.1, 0.7, 0.2], [0.2, 0.5, 0.3], [0.4, 0.6, 0]]))
 
-    assert (X.generate_one_path(length_of_path=length_of_paths,
-                                step=step, random_sample=test_sample[0]) == np.array([0, 0, 1, 1])).all()
-    assert (X.generate_one_path(length_of_path=length_of_paths,
-                                step=step, random_sample=test_sample[1]) == np.array([0, 1, 1, 0])).all()
+        step = 0.5
+        P = self.X.P(step)
+        assert_array_almost_equal(self.X.P(step), np.array(
+            [[0.55, 0.35, 0.1], [0.1, 0.75, 0.15], [0.2, 0.3, 0.5]]))
 
-    ########################
-    # Test next_value_of_x #
-    ########################
+    number_of_paths = 4
+    length_of_paths = 5
+    step = 0.5
+    test_sample = np.array([[0.2, 0.7, 0.3, 0.91],
+                            [0.9, 0.3, 0.05, 0.9],
+                            [0.95, 0.05, 0.6, 0.05],
+                            [0.6, 0.9, 0.1, 0.7]])
 
-    assert X.next_value_of_X(0, 0.69, 1) == 1
-    assert X.next_value_of_X(0, 0.71, 1) == 0
-    assert X.next_value_of_X(1, 0.19, 1) == 1
-    assert X.next_value_of_X(1, 0.21, 1) == 0
+    def test_generate_paths(self):
+        paths = self.X.generate_paths(
+            self.number_of_paths, self.length_of_paths, self.step, self.test_sample)
+
+        assert paths.shape == (self.number_of_paths, self.length_of_paths)
+        assert_array_almost_equal(paths, np.array([[0, 0, 1, 1, 2],
+                                                   [0, 2, 1, 0, 2],
+                                                   [0, 2, 0, 1, 0],
+                                                   [0, 1, 2, 0, 1]]))
+        pass
+
+
+def test_agregate_matrix():
+    M = np.array([[1, 2, 3], [2, 4, 5], [0, 5, 3]])
+    print(agregate_matrix(M))
+    assert_array_equal(agregate_matrix(M),  np.array(
+        [[1, 3, 6], [2, 6, 11], [0, 5, 8]]))
