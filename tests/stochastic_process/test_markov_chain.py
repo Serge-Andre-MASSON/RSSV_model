@@ -1,6 +1,7 @@
 import numpy as np
 from numpy.testing import assert_array_equal, assert_array_almost_equal
-from stochastic_process.markov_chain import ContinuousMarkovChain, agregate_matrix
+
+from stochastic_process import ContinuousMarkovChain, agregate_matrix
 
 
 class TestContinuousMarkovChainWithTwoStates():

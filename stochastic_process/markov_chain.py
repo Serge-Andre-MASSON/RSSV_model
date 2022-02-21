@@ -3,7 +3,7 @@ import numpy as np
 
 class ContinuousMarkovChain:
     # TODO: Change this docstring.
-    """Implement a continous time Markov chain with two states.
+    """Implement a continous time Markov chain.
     """
 
     def __init__(self, Q: np.ndarray) -> None:
@@ -57,20 +57,3 @@ class ContinuousMarkovChain:
 def agregate_matrix(M):
     """Return a matrix where each columns j is the sum of columns 0 to j of the provided matrix."""
     return np.dot(M, np.triu(np.ones_like(M)))
-
-
-if __name__ == "__main__":
-    Q = np.array([[- 7, 5, 2], [2, - 6, 4], [1, 5, -6]])
-    X = ContinuousMarkovChain(Q)
-    number_of_paths = 1
-    length_of_paths = 50
-    step = 0.05
-
-    path = X.generate_paths(
-        number_of_paths, length_of_paths, step).reshape((50,))
-
-    import matplotlib.pyplot as plt
-
-    plt.plot(path)
-    plt.show()
-    # TODO: implement a random transition matrix builder and plot some stochastic markov chain.
