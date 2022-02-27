@@ -2,7 +2,6 @@ import numpy as np
 
 
 class ContinuousMarkovChain:
-    # TODO: Change this docstring.
     """Implement a continous time Markov chain.
     """
 
@@ -12,23 +11,17 @@ class ContinuousMarkovChain:
     def P(self, step):
         return np.eye(*self.Q.shape) + step * self.Q
 
-    def g_paths(self, number_of_paths: int, length_of_paths: int, step: float, random_sample: np.ndarray = None):
-        M = self.P(step)
-        aggregate_P = agregate_matrix(M)
-        paths = np.zeros((number_of_paths, length_of_paths))
-        return paths
-
-    def generate_paths(self, number_of_paths: int, length_of_paths: int, step: float, random_sample: np.ndarray = None):
-        """Generate a random matrix where each line is a randomly generated path of the Markov chain for the time step provided.
+    def generate_paths(self, number_of_paths: int, length_of_paths: int, step: float, random_sample: np.ndarray = None) -> np.ndarray:
+        """Generate a matrix where each line is a randomly generated path of the Markov chain with the time step provided.
 
         Args:
             number_of_paths (int): Number of paths to simulate.
-            length_of_paths (int): Length of eqch path.
+            length_of_paths (int): Length of each path.
             step (float): The step used for the simulation.
             random_sample (np.ndarray, optional): This argument is here for test purposes and defaults to None. It can be use to provide an external random sample.
 
         Returns:
-            _type_: A matrix containing all paths generated where each path is a row.
+            (np.ndarray): A matrix containing all paths generated where each path is a row.
         """
         if random_sample is None:
             random_sample = np.random.rand(
@@ -40,11 +33,11 @@ class ContinuousMarkovChain:
 
         for j in range(length_of_paths - 1):
             X = paths[:, j]
-            paths[:, j+1] = self.next_values(X, random_sample[:, j], A)
+            paths[:, j+1] = self.__next_values(X, random_sample[:, j], A)
 
         return paths
 
-    def next_values(self, X, random_sample, A):
+    def __next_values(self, X, random_sample, A):
         next_value_of_X = np.zeros_like(X)
 
         for i, x, r in zip(range(len(X)), X, random_sample):
