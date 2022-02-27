@@ -1,6 +1,6 @@
 import numpy as np
 
-from stochastic_process import BrownianMotion, ContinuousMarkovChain
+from stochastic_process import ContinuousMarkovChain
 
 
 class RiskyAsset:
