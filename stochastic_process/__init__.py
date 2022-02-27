@@ -1,2 +1,1 @@
 from stochastic_process.markov_chain import ContinuousMarkovChain, agregate_matrix
-from stochastic_process.brownian_motion import BrownianMotion
