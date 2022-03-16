@@ -1,52 +1,78 @@
 import numpy as np
 
 
-class ContinuousMarkovChain:
-    """Implement a continous time Markov chain.
-    """
+class MarkovChain:
 
-    def __init__(self, Q: np.ndarray) -> None:
-        self.Q = Q
+    def __init__(self, *args) -> None:
+        self.Q = Q_from_coefficients(args)
+        self.number_of_states = len(args)
 
-    def P(self, step):
-        return np.eye(*self.Q.shape) + step * self.Q
+    def P(self, delta_t):
+        return np.eye(len(self.Q)) + self.Q * delta_t
 
-    def generate_paths(self, number_of_paths: int, length_of_paths: int, step: float, random_sample: np.ndarray = None) -> np.ndarray:
-        """Generate a matrix where each line is a randomly generated path of the Markov chain with the time step provided.
+    def A(self, delta_t):
+        P = self.P(delta_t)
+        A = P @ np.triu(np.ones_like(P))
+        return A
 
-        Args:
-            number_of_paths (int): Number of paths to simulate.
-            length_of_paths (int): Length of each path.
-            step (float): The step used for the simulation.
-            random_sample (np.ndarray, optional): This argument is here for test purposes and defaults to None. It can be use to provide an external random sample.
+    def paths(self, random_sample: np.ndarray, delta_t):
+        A = self.A(delta_t)
+        r, c = random_sample.shape
+        X_paths = np.zeros((r, c + 1), dtype=int)
+        for j in range(c):
+            current_values_of_X = X_paths[:, j]
+            A_corresponding_rows = A[current_values_of_X]
 
-        Returns:
-            (np.ndarray): A matrix containing all paths generated where each path is a row.
-        """
-        if random_sample is None:
-            random_sample = np.random.rand(
-                number_of_paths, length_of_paths - 1)
+            current_random_sample = random_sample[:, j]
+            masked_A_corresponding_rows = mask(
+                current_random_sample, A_corresponding_rows)
 
-        paths = np.zeros((number_of_paths, length_of_paths), dtype=int)
+            X_paths[:, j + 1] = next_value(masked_A_corresponding_rows)
+        return X_paths
 
-        A = agregate_matrix(self.P(step))
+    def next_values(self, M):
+        pass
 
-        for j in range(length_of_paths - 1):
-            X = paths[:, j]
-            paths[:, j+1] = self.__next_values(X, random_sample[:, j], A)
 
-        return paths
+class Sigma:
+    def __init__(self, *args) -> None:
+        self.states = np.array(args)
 
-    def __next_values(self, X, random_sample, A):
-        next_value_of_X = np.zeros_like(X)
-
-        for i, x, r in zip(range(len(X)), X, random_sample):
-            mask: np.ndarray = r < A[x, :]
-            next_value_of_X[i] = mask.argmax(axis=0)
-
-        return np.array(next_value_of_X)
+    def paths(self, i):
+        return self.states[i]
 
 
 def agregate_matrix(M):
     """Return a matrix where each columns j is the sum of columns 0 to j of the provided matrix."""
     return np.dot(M, np.triu(np.ones_like(M)))
+
+
+def Q_from_coefficients(coefficients):
+    l = len(coefficients)
+    n = 0
+    while n**2 - n != l:
+        n += 1
+        if n > l:
+            print(l)
+            raise ValueError(
+                "Le nombre de coefficients doit être de la forme n(n-1)")
+    Q = np.zeros((n, n))
+    l_index = 0
+    for i in range(n):
+        for j in range(n):
+            if i != j:
+                Q[i, j] = coefficients[l_index]
+                l_index += 1
+
+    for i in range(len(Q)):
+        Q[i, i] = - Q[i].sum()
+    return Q
+
+
+def mask(r, M):
+    mask = r < np.transpose(M)
+    return np.transpose(mask)
+
+
+def next_value(mask):
+    return np.argmax(mask, axis=1)
