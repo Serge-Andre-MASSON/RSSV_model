@@ -15,7 +15,7 @@ class Yahoo():
 
     @cache
     def options_at(self, maturity):
-        """Return a dataframe containing call options data for this maturity."""
+        """Return a dataframe containing options data for this maturity."""
         return self.ticker.option_chain(maturity)
 
     def call_options(self):
