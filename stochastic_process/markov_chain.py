@@ -2,8 +2,12 @@ import numpy as np
 
 
 class MarkovChain:
+    """Implement a continuous time markov chain with any number of states.
+    """
 
     def __init__(self, *args) -> None:
+        """Take the non diagonal terms of an intensity matrix Q, build Q and deduce the number of states from the size of Q. 
+        """
         self.Q = Q_from_coefficients(args)
         self.number_of_states = len(args)
 
