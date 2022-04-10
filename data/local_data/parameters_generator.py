@@ -4,8 +4,8 @@ import numpy as np
 
 
 class ParametersGenerator(ABC):
-    min: float
-    max: float
+    min: float = None
+    max: float = None
 
     def generate(self, size: int, number_of_states: int, **kwargs) -> np.ndarray:
         self.set_min_or_max(**kwargs)
@@ -32,18 +32,18 @@ class ParametersGenerator(ABC):
         pass
 
 
-class State(ParametersGenerator):
+class StatesGenerator(ParametersGenerator):
 
     def shape_of_random_sample(self, size, number_of_states):
         return size, number_of_states
 
 
-class MuStatesGenerator(State):
+class MuStatesGenerator(StatesGenerator):
     min = 0.01
     max = 0.1
 
 
-class SigmaStatesGenerator(State):
+class SigmaStatesGenerator(StatesGenerator):
     min = 0.1
     max = 2
 
