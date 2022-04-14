@@ -8,7 +8,7 @@ def convert_maturity(maturity: str, today: str = None) -> float:
 
     Args:
         maturity (str): A str date formatted as "%Y-%m-%d"
-        today (str, optional): _description_. If not provided, today wil be computed as the today datetime object.
+        today (str, optional): If not provided, today will be computed as the today datetime object.
 
     Returns:
         float: The normalized (1 = 365) number of day(s) between maturity and today.
@@ -22,6 +22,10 @@ def convert_maturity(maturity: str, today: str = None) -> float:
     else:
         # If today is not provided, use the real date to build the corresponding datetime object
         today_datetime = datetime.today()
+
     # Return it as a number of day when one year is one
     converted_maturity = (maturity_datetime - today_datetime).days/365
-    return converted_maturity
+    if converted_maturity > 0:
+        return converted_maturity
+    else:
+        raise ValueError("Maturity is less than one day from now.")
