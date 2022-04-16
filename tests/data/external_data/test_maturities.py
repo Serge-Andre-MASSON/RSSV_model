@@ -13,13 +13,15 @@ with open('tests/data/external_data/ora.pickle', 'rb') as f:
 def test_maturity_convert_within_a_month():
     today = '2022-03-12'
     maturity = '2022-03-16'
-    assert convert_maturity(maturity, today) == 4 / 365
+    # 4 / 365, arrondi à 3 chiffres après la virgule.
+    assert convert_maturity(maturity, today) == 0.011
 
 
 def test_maturity_convert_within_two_months():
     today = '2022-03-12'
     maturity = '2022-04-16'
-    assert convert_maturity(maturity, today) == (16 + 31 - 12) / 365
+    # (16 + 31 - 12) / 365, arrondi à 3 chiffres après la virgule.
+    assert convert_maturity(maturity, today) == 0.096
 
 
 def test_convert_maturity_when_maturity_is_in_the_past():
